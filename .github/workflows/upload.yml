@@ -1,6 +1,8 @@
 name: YouTube Shorts Daily Uploader
 
 on:
+  push:
+    branches: [ master, main ]
   schedule:
     # 13:30 UTC is exactly 19:00 (7:00 PM) IST
     - cron: '30 13 * * *'
