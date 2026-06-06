@@ -140,6 +140,10 @@ def main():
                 tags = data.get('tags', tags)
                 print(f"Loaded AI SEO Data for {video_filename}")
 
+    # Ensure title does not exceed YouTube's 100 character limit
+    if len(title) > 100:
+        title = title[:97] + "..."
+
     # Automatically add Spotify promo to the top of every description
     promo_text = "✨ Subscribe for more peaceful moments and relaxation.\n\n"
     description = promo_text + description
