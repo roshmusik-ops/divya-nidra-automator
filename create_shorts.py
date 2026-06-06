@@ -2,6 +2,7 @@ import os
 import json
 import argparse
 from moviepy.editor import VideoFileClip
+import moviepy.video.fx.all as vfx
 import google.generativeai as genai
 import yt_dlp
 
@@ -58,7 +59,7 @@ def cut_video(input_path, topic, api_key):
     video = VideoFileClip(input_path)
     duration = video.duration
     
-    clip_length = 59  # 59 seconds for shorts
+    clip_length = 30  # 30 seconds for shorts
     
     seo_file = os.path.join(output_dir, 'seo_data.json')
     if os.path.exists(seo_file):
@@ -83,6 +84,17 @@ def cut_video(input_path, topic, api_key):
         
         print(f"\n--- Cutting Part {part} ({start_time}s to {end_time}s) ---")
         clip = video.subclip(start_time, end_time)
+
+        # Crop to 9:16 aspect ratio (Shorts vertical format)
+        w, h = clip.size
+        target_ratio = 9 / 16
+        if w / h > target_ratio:
+            new_w = int(h * target_ratio)
+            clip = clip.fx(vfx.crop, width=new_w, height=h, x_center=w/2, y_center=h/2)
+        else:
+            new_h = int(w / target_ratio)
+            clip = clip.fx(vfx.crop, width=w, height=new_h, x_center=w/2, y_center=h/2)
+
         clip.write_videofile(output_filepath, codec="libx264", audio_codec="aac")
         
         # Generate SEO
